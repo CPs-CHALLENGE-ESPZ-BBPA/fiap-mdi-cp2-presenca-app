@@ -1,60 +1,43 @@
-import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { View } from "react-native";
+import { useEffect } from 'react';
+import { View } from 'react-native';
+import { Stack, useRouter, useSegments } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { AuthProvider, useAuth } from '../context/AuthContext';
+import { AppDataProvider } from '../context/AppDataContext';
+import { Colors } from '../constants/colors';
 
-export default function Layout() {
+function RootLayoutNav() {
+  const { user, isLoading } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoading) return;
+    const inAuthGroup = segments[0] === '(auth)';
+    if (!user && !inAuthGroup) {
+      router.replace('/(auth)/login');
+    } else if (user && inAuthGroup) {
+      router.replace('/(tabs)');
+    }
+  }, [user, segments, isLoading]);
+
   return (
-    <View style={{ flex: 1, backgroundColor: "#000000" }}>
+    <View style={{ flex: 1, backgroundColor: Colors.background }}>
       <StatusBar style="light" />
-
-      <Stack
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: "#000000",
-          },
-          headerTintColor: "#FFFFFF",
-          headerTitleStyle: {
-            fontWeight: "bold",
-          },
-          contentStyle: {
-            backgroundColor: "#000000",
-          },
-          animation: "slide_from_right",
-        }}
-      >
-        <Stack.Screen
-          name="index"
-          options={{
-            title: "Home",
-            headerStyle: {
-              backgroundColor: "#ED145B",
-            },
-            headerTintColor: "#FFFFFF",
-          }}
-        />
-
-        <Stack.Screen
-          name="about"
-          options={{
-            title: "Sobre",
-          }}
-        />
-
-        <Stack.Screen
-          name="login"
-          options={{
-              title: "Login",
-          }}
-        />
-
-        <Stack.Screen
-          name="profile"
-          options={{
-            title: "Perfil",
-          }}
-        />
-
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(tabs)" />
       </Stack>
     </View>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <AppDataProvider>
+        <RootLayoutNav />
+      </AppDataProvider>
+    </AuthProvider>
   );
 }

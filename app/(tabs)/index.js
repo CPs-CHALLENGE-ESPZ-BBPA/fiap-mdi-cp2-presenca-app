@@ -1,17 +1,10 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, StyleSheet, Image } from 'react-native';
+import { Colors } from '../../constants/colors';
 
-export default function Sobre() {
-  const router = useRouter();
-
+export default function Inicio() {
   return (
-    
     <View style={styles.container}>
-      
-      <Image
-        source={require("../assets/fiap-logo.png")}
-        style={styles.imagem}
-      />
+      <Image source={require('../../assets/fiap-logo.png')} style={styles.imagem} />
 
       <Text style={styles.titulo}>Presença Inteligente</Text>
 
@@ -29,11 +22,6 @@ export default function Sobre() {
         Para garantir a autenticidade, a presença só pode ser marcada quando o aluno
         estiver conectado ao Wi-Fi da FIAP ou dentro da área de localização da instituição.
       </Text>
-
-      <TouchableOpacity onPress={() => router.push('/login')}>
-        <Text style={styles.acessar}>Acessar</Text>
-      </TouchableOpacity>
-
     </View>
   );
 }
@@ -43,38 +31,28 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#0D0D0D',
-    padding: 20,
+    backgroundColor: Colors.background,
+    padding: 24,
   },
-
   imagem: {
     width: 140,
     height: 140,
     borderRadius: 70,
     marginBottom: 20,
     borderWidth: 3,
-    borderColor: '#E83D84',
+    borderColor: Colors.primary,
   },
-
   titulo: {
     fontSize: 26,
     fontWeight: 'bold',
-    color: '#E83D84',
-    marginBottom: 12,
+    color: Colors.primary,
+    marginBottom: 16,
   },
-
   descricao: {
     fontSize: 15,
-    color: '#CCCCCC',
+    color: Colors.textSecondary,
     textAlign: 'center',
     marginBottom: 10,
     lineHeight: 22,
-  },
-
-  acessar: {
-    fontSize: 16,
-    color: '#E83D84',
-    fontWeight: '600',
-    marginTop: 20,
   },
 });
