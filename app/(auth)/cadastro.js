@@ -8,13 +8,45 @@ import {
   ScrollView,
   Platform,
   ActivityIndicator,
+  Animated,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Colors } from '../../constants/colors';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function useShake() {
+  const anim = useRef(new Animated.Value(0)).current;
+
+  function shake() {
+    anim.setValue(0);
+    Animated.sequence([
+      Animated.timing(anim, { toValue: 10, duration: 60, useNativeDriver: true }),
+      Animated.timing(anim, { toValue: -10, duration: 60, useNativeDriver: true }),
+      Animated.timing(anim, { toValue: 8, duration: 60, useNativeDriver: true }),
+      Animated.timing(anim, { toValue: -8, duration: 60, useNativeDriver: true }),
+      Animated.timing(anim, { toValue: 0, duration: 60, useNativeDriver: true }),
+    ]).start();
+  }
+
+  return { shakeStyle: { transform: [{ translateX: anim }] }, shake };
+}
+
+function useFadeIn() {
+  const anim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(anim, {
+      toValue: 1,
+      duration: 350,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  return { opacity: anim };
+}
 
 export default function Cadastro() {
   const router = useRouter();
@@ -29,6 +61,9 @@ export default function Cadastro() {
   const [sucesso, setSucesso] = useState('');
   const [loading, setLoading] = useState(false);
   const [touched, setTouched] = useState({});
+
+  const fadeIn = useFadeIn();
+  const { shakeStyle, shake } = useShake();
 
   function validarCampo(campo, valor, senhaAtual) {
     switch (campo) {
@@ -65,7 +100,6 @@ export default function Cadastro() {
       const erro = validarCampo(campo, valor, senhaRef);
       setErros(prev => ({ ...prev, [campo]: erro }));
     }
-    // Revalida confirmação quando a senha muda
     if (campo === 'senha' && touched.confirmacao) {
       const erroConf = validarCampo('confirmacao', confirmacao, valor);
       setErros(prev => ({ ...prev, confirmacao: erroConf }));
@@ -91,7 +125,10 @@ export default function Cadastro() {
       confirmacao: validarCampo('confirmacao', confirmacao),
     };
     setErros(novosErros);
-    if (Object.values(novosErros).some(Boolean)) return;
+    if (Object.values(novosErros).some(Boolean)) {
+      shake();
+      return;
+    }
 
     setErroGeral('');
     setSucesso('');
@@ -102,6 +139,7 @@ export default function Cadastro() {
       setTimeout(() => router.back(), 1500);
     } catch (e) {
       setErroGeral(e.message);
+      shake();
     } finally {
       setLoading(false);
     }
@@ -113,99 +151,105 @@ export default function Cadastro() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <Text style={styles.titulo}>Criar Conta</Text>
+        <Animated.View style={[styles.conteudo, fadeIn]}>
+          <Text style={styles.titulo}>Criar Conta</Text>
 
-        <View style={styles.campo}>
-          <Text style={styles.label}>Nome completo</Text>
-          <TextInput
-            style={[styles.input, touched.nome && erros.nome ? styles.inputErro : null]}
-            placeholder="Seu nome"
-            placeholderTextColor={Colors.textMuted}
-            value={nome}
-            onChangeText={v => handleChange('nome', v, setNome)}
-            onBlur={() => handleBlur('nome', nome)}
-          />
-          {touched.nome && !!erros.nome && (
-            <Text style={styles.erroInline}>{erros.nome}</Text>
-          )}
-        </View>
+          <Animated.View style={shakeStyle}>
+            <View style={styles.campo}>
+              <Text style={styles.label}>Nome completo</Text>
+              <TextInput
+                style={[styles.input, touched.nome && erros.nome ? styles.inputErro : null]}
+                placeholder="Seu nome"
+                placeholderTextColor={Colors.textMuted}
+                value={nome}
+                onChangeText={v => handleChange('nome', v, setNome)}
+                onBlur={() => handleBlur('nome', nome)}
+              />
+              {touched.nome && !!erros.nome && (
+                <Text style={styles.erroInline}>{erros.nome}</Text>
+              )}
+            </View>
 
-        <View style={styles.campo}>
-          <Text style={styles.label}>E-mail</Text>
-          <TextInput
-            style={[styles.input, touched.email && erros.email ? styles.inputErro : null]}
-            placeholder="usuario@dominio.com"
-            placeholderTextColor={Colors.textMuted}
-            value={email}
-            onChangeText={v => handleChange('email', v, setEmail)}
-            onBlur={() => handleBlur('email', email)}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          {touched.email && !!erros.email && (
-            <Text style={styles.erroInline}>{erros.email}</Text>
-          )}
-        </View>
+            <View style={styles.campo}>
+              <Text style={styles.label}>E-mail</Text>
+              <TextInput
+                style={[styles.input, touched.email && erros.email ? styles.inputErro : null]}
+                placeholder="usuario@dominio.com"
+                placeholderTextColor={Colors.textMuted}
+                value={email}
+                onChangeText={v => handleChange('email', v, setEmail)}
+                onBlur={() => handleBlur('email', email)}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+              {touched.email && !!erros.email && (
+                <Text style={styles.erroInline}>{erros.email}</Text>
+              )}
+            </View>
 
-        <View style={styles.campo}>
-          <Text style={styles.label}>Senha</Text>
-          <TextInput
-            style={[styles.input, touched.senha && erros.senha ? styles.inputErro : null]}
-            placeholder="Mínimo 6 caracteres"
-            placeholderTextColor={Colors.textMuted}
-            secureTextEntry
-            value={senha}
-            onChangeText={v => handleChange('senha', v, setSenha)}
-            onBlur={() => handleBlur('senha', senha)}
-          />
-          {touched.senha && !!erros.senha && (
-            <Text style={styles.erroInline}>{erros.senha}</Text>
-          )}
-        </View>
+            <View style={styles.campo}>
+              <Text style={styles.label}>Senha</Text>
+              <TextInput
+                style={[styles.input, touched.senha && erros.senha ? styles.inputErro : null]}
+                placeholder="Mínimo 6 caracteres"
+                placeholderTextColor={Colors.textMuted}
+                secureTextEntry
+                value={senha}
+                onChangeText={v => handleChange('senha', v, setSenha)}
+                onBlur={() => handleBlur('senha', senha)}
+              />
+              {touched.senha && !!erros.senha && (
+                <Text style={styles.erroInline}>{erros.senha}</Text>
+              )}
+            </View>
 
-        <View style={styles.campo}>
-          <Text style={styles.label}>Confirmar senha</Text>
-          <TextInput
-            style={[styles.input, touched.confirmacao && erros.confirmacao ? styles.inputErro : null]}
-            placeholder="Repita a senha"
-            placeholderTextColor={Colors.textMuted}
-            secureTextEntry
-            value={confirmacao}
-            onChangeText={v => handleChange('confirmacao', v, setConfirmacao)}
-            onBlur={() => handleBlur('confirmacao', confirmacao)}
-          />
-          {touched.confirmacao && !!erros.confirmacao && (
-            <Text style={styles.erroInline}>{erros.confirmacao}</Text>
-          )}
-        </View>
+            <View style={styles.campo}>
+              <Text style={styles.label}>Confirmar senha</Text>
+              <TextInput
+                style={[styles.input, touched.confirmacao && erros.confirmacao ? styles.inputErro : null]}
+                placeholder="Repita a senha"
+                placeholderTextColor={Colors.textMuted}
+                secureTextEntry
+                value={confirmacao}
+                onChangeText={v => handleChange('confirmacao', v, setConfirmacao)}
+                onBlur={() => handleBlur('confirmacao', confirmacao)}
+              />
+              {touched.confirmacao && !!erros.confirmacao && (
+                <Text style={styles.erroInline}>{erros.confirmacao}</Text>
+              )}
+            </View>
 
-        {!!erroGeral && (
-          <View style={styles.erroGeralContainer}>
-            <Text style={styles.erroGeralText}>{erroGeral}</Text>
-          </View>
-        )}
+            {!!erroGeral && (
+              <View style={styles.erroGeralContainer}>
+                <Text style={styles.erroGeralText}>{erroGeral}</Text>
+              </View>
+            )}
 
-        {!!sucesso && (
-          <View style={styles.sucessoContainer}>
-            <Text style={styles.sucessoText}>{sucesso}</Text>
-          </View>
-        )}
+            {!!sucesso && (
+              <View style={styles.sucessoContainer}>
+                <Text style={styles.sucessoText}>{sucesso}</Text>
+              </View>
+            )}
+          </Animated.View>
 
-        <TouchableOpacity
-          style={[styles.botao, !formularioValido() && styles.botaoDesabilitado]}
-          onPress={handleCadastro}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color={Colors.textPrimary} />
-          ) : (
-            <Text style={styles.textoBotao}>Criar Conta</Text>
-          )}
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.botao, !formularioValido() && styles.botaoDesabilitado]}
+            onPress={handleCadastro}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color={Colors.textPrimary} />
+            ) : (
+              <Text style={styles.textoBotao}>Criar Conta</Text>
+            )}
+          </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.link}>Já tenho conta. <Text style={styles.linkDestaque}>Fazer login</Text></Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Text style={styles.link}>
+              Já tenho conta. <Text style={styles.linkDestaque}>Fazer login</Text>
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -217,6 +261,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: Colors.background,
     padding: 24,
+  },
+  conteudo: {
+    width: '100%',
   },
   titulo: {
     fontSize: 28,
