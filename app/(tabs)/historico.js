@@ -1,16 +1,34 @@
-import { View, Text, FlatList, StyleSheet, RefreshControl } from 'react-native';
-import { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  RefreshControl,
+  TextInput,
+} from 'react-native';
+import { useEffect, useState, useMemo } from 'react';
 import { useAppData } from '../../context/AppDataContext';
 import { Colors } from '../../constants/colors';
 
-function ListaVazia() {
+function ListaVazia({ busca }) {
   return (
     <View style={styles.vazio}>
       <Text style={styles.vazioIcone}>📋</Text>
-      <Text style={styles.vazioTitulo}>Nenhuma presença registrada</Text>
-      <Text style={styles.vazioSubtitulo}>
-        Vá até a aba Perfil e registre sua presença estando na FIAP.
-      </Text>
+      {busca ? (
+        <>
+          <Text style={styles.vazioTitulo}>Nenhum resultado</Text>
+          <Text style={styles.vazioSubtitulo}>
+            Nenhuma presença encontrada para "{busca}".
+          </Text>
+        </>
+      ) : (
+        <>
+          <Text style={styles.vazioTitulo}>Nenhuma presença registrada</Text>
+          <Text style={styles.vazioSubtitulo}>
+            Vá até a aba Perfil e registre sua presença estando na FIAP.
+          </Text>
+        </>
+      )}
     </View>
   );
 }
@@ -44,6 +62,7 @@ function ItemPresenca({ item }) {
 export default function Historico() {
   const { historico, loadHistorico } = useAppData();
   const [refreshing, setRefreshing] = useState(false);
+  const [busca, setBusca] = useState('');
 
   useEffect(() => {
     loadHistorico();
@@ -55,18 +74,41 @@ export default function Historico() {
     setRefreshing(false);
   }
 
+  const resultados = useMemo(() => {
+    const lista = [...historico].reverse();
+    if (!busca.trim()) return lista;
+    const termo = busca.toLowerCase();
+    return lista.filter(item => {
+      const local = (item.local ?? '').toLowerCase();
+      const data = new Date(item.data).toLocaleDateString('pt-BR');
+      return local.includes(termo) || data.includes(termo);
+    });
+  }, [historico, busca]);
+
   return (
     <View style={styles.container}>
+      <View style={styles.buscaContainer}>
+        <TextInput
+          style={styles.buscaInput}
+          placeholder="Buscar por local ou data..."
+          placeholderTextColor={Colors.textMuted}
+          value={busca}
+          onChangeText={setBusca}
+          clearButtonMode="while-editing"
+        />
+      </View>
+
       <Text style={styles.contador}>
-        {historico.length} {historico.length === 1 ? 'presença registrada' : 'presenças registradas'}
+        {resultados.length}{busca ? ` de ${historico.length}` : ''}{' '}
+        {historico.length === 1 ? 'presença registrada' : 'presenças registradas'}
       </Text>
 
       <FlatList
-        data={[...historico].reverse()}
+        data={resultados}
         keyExtractor={item => item.id}
         renderItem={({ item }) => <ItemPresenca item={item} />}
-        ListEmptyComponent={<ListaVazia />}
-        contentContainerStyle={historico.length === 0 ? styles.listaVazia : styles.lista}
+        ListEmptyComponent={<ListaVazia busca={busca} />}
+        contentContainerStyle={resultados.length === 0 ? styles.listaVazia : styles.lista}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -85,17 +127,31 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
+  buscaContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    paddingBottom: 10,
+  },
+  buscaInput: {
+    backgroundColor: Colors.surface,
+    color: Colors.textPrimary,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    fontSize: 14,
+  },
   contador: {
     color: Colors.textMuted,
-    fontSize: 13,
+    fontSize: 12,
     textAlign: 'center',
-    paddingVertical: 12,
+    paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
   lista: {
     padding: 16,
-    gap: 10,
   },
   listaVazia: {
     flex: 1,
