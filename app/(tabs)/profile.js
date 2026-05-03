@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
 import Button from '../../components/Button';
 import Message from '../../components/Message';
@@ -11,7 +11,7 @@ import { Colors } from '../../constants/colors';
 
 export default function Profile() {
   const { user, logout } = useAuth();
-  const { registrarPresenca } = useAppData();
+  const { historico, registrarPresenca } = useAppData();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
@@ -51,15 +51,26 @@ export default function Profile() {
       <Image source={require('../../assets/fiap-logo.png')} style={styles.imagem} />
 
       <Text style={styles.nome}>{user?.nome ?? 'Usuário'}</Text>
-      <Text style={styles.info}>{user?.email ?? ''}</Text>
+      <Text style={styles.email}>{user?.email ?? ''}</Text>
+
+      <View style={styles.statContainer}>
+        <Text style={styles.statNumero}>{historico.length}</Text>
+        <Text style={styles.statLabel}>
+          {historico.length === 1 ? 'presença registrada' : 'presenças registradas'}
+        </Text>
+      </View>
 
       <Message type={message.type} message={message.text} />
 
-      <Button title="Registrar Presença" onPress={handleRegisterAttendance} style={styles.botao} />
+      <Button
+        title="Registrar Presença"
+        onPress={handleRegisterAttendance}
+        style={styles.botao}
+      />
 
-      <Text style={styles.logout} onPress={logout}>
-        Sair
-      </Text>
+      <TouchableOpacity style={styles.logoutBotao} onPress={logout}>
+        <Text style={styles.logoutTexto}>Sair da conta</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -70,34 +81,61 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.background,
-    padding: 20,
+    padding: 24,
   },
   imagem: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 20,
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    marginBottom: 16,
     borderWidth: 3,
     borderColor: Colors.primary,
   },
   nome: {
-    fontSize: 24,
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: Colors.textPrimary,
+    marginBottom: 4,
+  },
+  email: {
+    fontSize: 14,
+    color: Colors.textMuted,
+    marginBottom: 20,
+  },
+  statContainer: {
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  statNumero: {
+    fontSize: 28,
     fontWeight: 'bold',
     color: Colors.primary,
-    marginBottom: 6,
   },
-  info: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-    marginBottom: 16,
+  statLabel: {
+    fontSize: 13,
+    color: Colors.textMuted,
+    marginTop: 2,
   },
   botao: {
-    marginTop: 12,
     width: '80%',
+    marginTop: 4,
   },
-  logout: {
-    color: Colors.primary,
-    marginTop: 25,
-    fontSize: 16,
+  logoutBotao: {
+    marginTop: 28,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 8,
+  },
+  logoutTexto: {
+    color: Colors.textMuted,
+    fontSize: 14,
   },
 });
