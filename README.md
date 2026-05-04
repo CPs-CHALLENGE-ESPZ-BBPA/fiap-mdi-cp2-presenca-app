@@ -67,9 +67,6 @@ Escaneie o QR Code com o Expo Go ou rode em emulador com `a` (Android) / `i` (iO
 
 ## Demonstração Visual
 
-> **Adicionar prints de todas as telas e vídeo/GIF do fluxo completo.**
-> Fluxo mínimo a demonstrar: cadastro → login → registrar presença → histórico → logout.
-
 | Tela | Print |
 |------|-------|
 | Login | <img width="1918" height="943" alt="login" src="https://github.com/user-attachments/assets/60977bf0-f9f3-4edd-b74d-7065b65a9a12" /> |
