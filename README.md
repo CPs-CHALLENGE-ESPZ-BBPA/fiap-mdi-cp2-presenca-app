@@ -185,3 +185,10 @@ O redirecionamento só ocorre após `isLoading === false`, evitando flashes de t
 - Notificações locais lembrando o aluno de registrar presença no início da aula
 - Foto de perfil com Expo ImagePicker
 - Exportação do histórico em PDF ou CSV
+
+---
+
+## Vídeo Demonstrativo do Projeto
+
+https://github.com/user-attachments/assets/40f3f469-acd7-42c6-aa64-ed52079275c6
+
