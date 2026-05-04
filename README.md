@@ -72,15 +72,15 @@ Escaneie o QR Code com o Expo Go ou rode em emulador com `a` (Android) / `i` (iO
 
 | Tela | Print |
 |------|-------|
-| Login | *(adicionar print)* |
-| Cadastro | *(adicionar print)* |
-| Início | *(adicionar print)* |
-| Perfil | *(adicionar print)* |
-| Histórico | *(adicionar print)* |
-| Histórico com busca ativa | *(adicionar print)* |
-| Lista vazia | *(adicionar print)* |
+| Login | <img width="1918" height="943" alt="login" src="https://github.com/user-attachments/assets/60977bf0-f9f3-4edd-b74d-7065b65a9a12" /> |
+| Cadastro | <img width="1918" height="939" alt="cadastro" src="https://github.com/user-attachments/assets/f45b2ea9-23ff-4b0d-92a9-ce742d0ad9fb" /> |
+| Início | <img width="1349" height="703" alt="inicio" src="https://github.com/user-attachments/assets/8a7f1bff-b5f3-4ae6-97b0-e5dfb643ba20" /> |
+| Perfil | <img width="1915" height="944" alt="perfil" src="https://github.com/user-attachments/assets/12d92ed4-284d-418e-8621-6662ee8fca6a" /> |
+| Histórico | <img width="1917" height="943" alt="historico" src="https://github.com/user-attachments/assets/adaf8a0e-ed1e-4147-a653-08740dc9cb90" /> |
+| Histórico com busca ativa | <img width="1918" height="941" alt="historico_com_busca" src="https://github.com/user-attachments/assets/87850fc5-f028-41f9-8e69-004006c647a0" /> |
+| Lista vazia | <img width="1562" height="639" alt="lista_vazia" src="https://github.com/user-attachments/assets/7fa55c4f-63de-4c46-b335-e479f13edbea" /> |
 
-**Vídeo demonstração:** *(adicionar link YouTube/Google Drive)*
+**Vídeo demonstração:** [*(adicionar link YouTube/Google Drive)*](https://youtu.be/vZkmBN9wuQw)
 
 ---
 
