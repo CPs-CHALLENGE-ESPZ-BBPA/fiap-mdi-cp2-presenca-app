@@ -80,7 +80,7 @@ Escaneie o QR Code com o Expo Go ou rode em emulador com `a` (Android) / `i` (iO
 | Histórico com busca ativa | <img width="1918" height="941" alt="historico_com_busca" src="https://github.com/user-attachments/assets/87850fc5-f028-41f9-8e69-004006c647a0" /> |
 | Lista vazia | <img width="1562" height="639" alt="lista_vazia" src="https://github.com/user-attachments/assets/7fa55c4f-63de-4c46-b335-e479f13edbea" /> |
 
-**Vídeo demonstração:** [*(adicionar link YouTube/Google Drive)*](https://youtu.be/vZkmBN9wuQw)
+**Vídeo demonstração:** [*(link YouTube)*](https://youtu.be/vZkmBN9wuQw)
 
 ---
 
